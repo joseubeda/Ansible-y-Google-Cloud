@@ -1,5 +1,6 @@
 # **Ansible Y Google Cloud Platform**  
 
+</br>
 <p align="center">
 <b><u>Orquestación mediante Ansible en Google Cloud Platform</u></b>
 </p>
