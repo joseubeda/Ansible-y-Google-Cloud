@@ -1,13 +1,14 @@
 # **ANSIBLE Y GOOGLE CLOUD**  
 
-<center>
-  
-**Orquestación mediante Ansible en Google Cloud Platform**
+<p align="center">
+<b><u>Orquestación mediante Ansible en Google Cloud Platform</u></b>
+</p>
 
-![](images/ansible.png "Ansible")  
-</center>  
+<p align="center">
 
-![](images/Google.png "Google Cloud Platform")  
+  <img src="images/ansible.png" alt="Ansible"/>
+  <img src="images/Google.png" alt="Google"/>
 
+</p>
 
 
