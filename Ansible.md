@@ -1,4 +1,4 @@
-# Ansible en Google Cloud
+# __**Ansible en Google Cloud**__
 
 
 ## ¿Qué es Google Cloud? ☁
@@ -10,22 +10,26 @@ Google Cloud es el espacio virtual a través del cual se puede realizar una seri
 Son un servicio de Googe Cloud que permite a los usuarios el alquiler máquinas virtuales de tamaño modificable para ejecutar sus aplicaciones informáticas. Permite pagar únicamente por la capacidad utilizada, en lugar de comprar o alquilar una máquina para utilizarla durante varios meses o años, con Google se alquila la capacidad por horas.
 
 ## Creación de Instancias de VM 🔧
-1. Una vez registrados accederemos al Inicio del Panel de Control de Google Cloud. 
+1. Una vez registrados accederemos al Inicio del Panel de Control de Google Cloud.  
+
 ![](images/2.png "Panel de Control")
 
 2. En el panel de navegación situado a la izquierda seleccionamos **Compute Engine > Instancias de VM**.
 
-3.	Pulsamos en el panel superior en **Crear Instancia**.
+3.	Pulsamos en el panel superior en **Crear Instancia**.  
+
 ![](images/3.png "Creamos una Instancia")
 
-4.	En Nombre le asignamos un nombre a nuestra instancia.
+4.	En Nombre le asignamos un nombre a nuestra instancia.  
+
 ![](images/4.png "Asignamos un nombre")
 
 5.	En Disco de arranque seleccionamos la imagen que queramos para nuestra máquina, en nuestro caso será Ubuntu 18.04 LTS.
 
 6.	En Cortafuegos es donde abriremos los puertos para conectarnos a esa máquina. Aquí Google nos lo pone fácil y nos da la opción de marcar las casillas de http y https, también deberemos de añadir ssh.
 
-7.	Finalmente pulsamos en **Crear** y esperamos que se inicie nuestra instancia.
+7.	Finalmente pulsamos en **Crear** y esperamos que se inicie nuestra instancia.  
+
 ![](images/5.png "Pulsamos en Crear")
 
 ## Gestión de claves SSH 🔒
@@ -70,15 +74,18 @@ Mostramos la clave y la copiamos.
 cat id_rsa.pub
 ```
 
-3.	Nos vamos a nuestra instancia que queremos conectar (eslave1) y pulsamos en EDITAR.
+3.	Nos vamos a nuestra instancia que queremos conectar (eslave1) y pulsamos en EDITAR.  
+
 ![](images/6.png "Pulsamos en Editar")
 
-4.	En la sección Clave SSH insertamos la clave anterior y pulsamos en Guardar.
+4.	En la sección Clave SSH insertamos la clave anterior y pulsamos en Guardar.  
+
  ![](images/7.png "Pegamos la clave")
 
-5.	Realizamos el mismo procedimiento para el resto de nodos. 
+5.	Realizamos el mismo procedimiento para el resto de nodos.  
 
- 
+ ____
+ ----
 
 ##	¿Qué es Ansible? 💻
 ![](images/ansible.png "Ansible")  
@@ -147,7 +154,8 @@ Si sólo queremos hacer ping sobre uno de los nodos en lugar de usar all, indica
 
 ```
 ansible 10.128.0.3 -m ping
-```
+```  
+
 ![](images/9.png "Ping a un solo nodo")
 
 ### Módulo *shell*
@@ -171,11 +179,11 @@ Por ejemplo, el parámetro update_cache nos permite realizar la operación apt-g
 
 ```
 ansible all -m apt -a "update_cache=yes" -b
-```
+```  
 
 ![](images/11.png "apt-get update")
 
-> El modificador -b es para indicar que queremos realizar un escalado de privilegios (become) para poder ejecutar comandos como root.
+> El modificador -b es para indicar que queremos realizar un escalado de privilegios (become) para poder ejecutar comandos como root.  
 
 Para poder realizar la instalación de un paquete será necesario hacer uso de los parámetros *name* y *state*:
 
