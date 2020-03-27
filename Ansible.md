@@ -1,6 +1,9 @@
 # Ansible en Google Cloud
 
+
 ## ¿Qué es Google Cloud? ☁
+![](images/Google.png "Google Cloud Platform")  
+
 Google Cloud es el espacio virtual a través del cual se puede realizar una serie de tareas que antes requerían de hardware o software y que ahora utilizan la nube de Google como única forma de acceso, almacenamiento y gestión de datos.
 
 ## ¿Qué son las Instancias de VM? 
@@ -78,6 +81,8 @@ cat id_rsa.pub
  
 
 ##	¿Qué es Ansible? 💻
+![](images/ansible.png "Ansible")  
+
 Ansible es una herramienta que nos permite configurar, administrar y realizar instalaciones en sistemas cloud con múltiples nodos sin tener que instalar agentes software en ellos. 
 Sólo es necesario instalar Ansible en la máquina principal desde la que vamos a realizar operaciones sobre el resto de nodos y ésta se conectará a los nodos a través de SSH. Como requisito únicamente requiere Python en el servidor remoto en el que se vaya a ejecutar para poder utilizarlo.
 
