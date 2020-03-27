@@ -1,0 +1,1 @@
+# Ansible y Google Cloud
