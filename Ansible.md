@@ -88,7 +88,12 @@ cat id_rsa.pub
  ----
 
 ##	¿Qué es Ansible? 💻
+
+<center>
+
 ![](images/ansible.png "Ansible")  
+
+</center>
 
 Ansible es una herramienta que nos permite configurar, administrar y realizar instalaciones en sistemas cloud con múltiples nodos sin tener que instalar agentes software en ellos. 
 Sólo es necesario instalar Ansible en la máquina principal desde la que vamos a realizar operaciones sobre el resto de nodos y ésta se conectará a los nodos a través de SSH. Como requisito únicamente requiere Python en el servidor remoto en el que se vaya a ejecutar para poder utilizarlo.
