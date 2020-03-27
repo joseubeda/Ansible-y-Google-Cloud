@@ -135,11 +135,15 @@ El módulo ping nos permite realizar un ping sobre todos los nodos del inventari
 ansible all -m ping
 ```
 Usamos el modificador -m para indicar a Ansible el módulo que queremos utilizar, y el modificador all para indicarle que queremos hacerlo sobre todos los nodos.  
+
+![](images/8.png "Ping a todos los nodos")
+
 Si sólo queremos hacer ping sobre uno de los nodos en lugar de usar all, indicaremos el nodo sobre el que queremos realizar la operación.
 
 ```
 ansible 10.128.0.3 -m ping
 ```
+![](images/9.png "Ping a un solo nodo")
 
 ### Módulo *shell*
 Si no indicamos nigún módulo, por defecto Ansible utilizará el módulo shell, el cual nos permite ejecutar comandos sobre cada uno de los nodos.
@@ -149,7 +153,9 @@ El siguiente ejemplo ejecuta el comando uname -a sobre todos los nodos del inven
 ```
 ansible all -m shell -a "uname -a"
 ```
-En este caso el modificador -m nos permite indicar el módulo que queremos utilizar y el modificador -a nos permite indicar el comando.
+En este caso el modificador -m nos permite indicar el módulo que queremos utilizar y el modificador -a nos permite indicar el comando.  
+
+![](images/10.png "Módulo Shell")
 
 ### Módulo *apt*
 El módulo apt nos permite utilizar el sistema de gestión de paquetes APT para los sistemas operativos Debian y Ubuntu.
@@ -161,6 +167,8 @@ Por ejemplo, el parámetro update_cache nos permite realizar la operación apt-g
 ```
 ansible all -m apt -a "update_cache=yes" -b
 ```
+
+![](images/11.png "apt-get update")
 
 > El modificador -b es para indicar que queremos realizar un escalado de privilegios (become) para poder ejecutar comandos como root.
 
@@ -174,6 +182,8 @@ Ejemplo de cómo instalar git en cada uno de los nodos.
 ```
 ansible all -m apt -a "name=git state=present" -b
 ```
+
+![](images/12.png "git")
 
 
 
