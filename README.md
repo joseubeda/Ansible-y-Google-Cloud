@@ -9,6 +9,11 @@
 
   <img src="images/ansible.png" alt="Ansible"/>
   <img src="images/Google.png" alt="Google"/>
+<<<<<<< HEAD
+=======
+
+</p>
+>>>>>>> dc1a464ad5ab9cf2c9fee7991804c516a93a6db7
 
 </p>
 
