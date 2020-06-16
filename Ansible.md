@@ -212,7 +212,7 @@ ansible all -m apt -a "name=git state=present" -b
 ### Módulo *service*
 El módulo service nos permite activar o desactivar servicios sobre cada uno de los nodos.
 
-El siguiente ejemplo activa el servicio de sincronización horaria sobre todos los nodos del inventario.
+El siguiente ejemplo activa el servicio de apache2 sobre todos los nodos del inventario.
 
 ```
 ansible all -m service -a "name=apache2 state=started"
