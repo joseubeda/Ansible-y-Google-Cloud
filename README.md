@@ -1,11 +1,14 @@
-# **ANSIBLE Y GOOGLE CLOUD**  
+# **Proyecto Integrado ASIR 2019/2020**
 
-<center>
-**Orquestación mediante Ansible en Google Cloud Platform**
+</br>
+<p align="center">
+<b><u>Orquestación mediante Ansible en Google Cloud Platform</u></b>
+</p>
 
-![](images/ansible.png "Ansible")  
-![](images/Google.png "Google Cloud Platform")  
+<p align="center">
 
-</center>  
+  <img src="images/ansible.png" alt="Ansible"/>
+  <img src="images/Google.png" alt="Google"/>
 
+</p>
 

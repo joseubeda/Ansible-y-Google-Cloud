@@ -89,11 +89,9 @@ cat id_rsa.pub
 
 ##	¿Qué es Ansible? 💻
 
-<center>
-
-![](images/ansible.png "Ansible")  
-
-</center>
+<p align="center">
+    <img src="images/ansible.png" alt="Ansible"/>
+</p>
 
 Ansible es una herramienta que nos permite configurar, administrar y realizar instalaciones en sistemas cloud con múltiples nodos sin tener que instalar agentes software en ellos. 
 Sólo es necesario instalar Ansible en la máquina principal desde la que vamos a realizar operaciones sobre el resto de nodos y ésta se conectará a los nodos a través de SSH. Como requisito únicamente requiere Python en el servidor remoto en el que se vaya a ejecutar para poder utilizarlo.
@@ -144,6 +142,14 @@ A continuación vamos a realizar una breve demostración de cómo utilizar los m
 - shell
 
 - apt
+
+- service
+
+- Usuarios y Grupos
+
+- Archivos y Directorios
+
+- Crones
 
 ### Módulo *ping*
 El módulo ping nos permite realizar un ping sobre todos los nodos del inventario o sobre algún nodo específico.
@@ -203,6 +209,92 @@ ansible all -m apt -a "name=git state=present" -b
 
 ![](images/12.png "git")
 
+### Módulo *service*
+El módulo service nos permite activar o desactivar servicios sobre cada uno de los nodos.
+
+El siguiente ejemplo activa el servicio de sincronización horaria sobre todos los nodos del inventario.
+
+```
+ansible all -m service -a "name=apache2 state=started"
+```
+![](images/13.png "service apache2")
+
+Y con el siguiente comando comprobamos que el servicio esta activo:
+
+```
+ansible all -a "service apache2 status"
+```
+![](images/14.png "apache 2 status")
+
+
+### Módulos *Usuarios y Grupos*
+
+Los módulos de Ansible hacen muy sencilla la gestión de usuarios y grupos. Por ejemplo, si quisiéramos añadir un grupo admin:
+
+
+```
+ansible all -m group -a "name=admin state=present" -b
+```
+![](images/15.png "group admin")
+
+El módulo de grupos es muy sencillo. Se puede eliminar un grupo con state=absent o indicar si es un grupo de sistema con system=yes.
+
+Para añadir un usuario llamado jose al grupo que acabamos de añadir y crear su carpeta /home/jose, introducimos el siguiente comando:
+
+```
+ansible all -m user -a "name=jose group=admin createhome=yes" -b
+```
+![](images/16.png "jose admin")
+
+
+### Módulos *Archivos y Directorios*
+
+*Obtener información de un archivo*
+
+Si queremos obtener información sobre permisos o diferentes propiedades de un archivo, tenemos que utilizar el módulo stat:
+
+```
+ansible all -m stat -a "path=/etc/hosts"
+```
+![](images/17.png "stat")
+
+*Copiar un archivo a los servidores*
+
+El parámetro src puede ser un archivo o un directorio completo. Si incluimos una barra ‘/’ al final, solo los contenidos del directorio se copiaran al destino. 
+
+```
+ansible all -m copy -a "src=/etc/hosts dest=/tmp/hosts"
+```
+![](images/18.png "copy")
+
+
+*Crear archivos y directorios*
+
+El módulo file puede utilizarse para crear archivos y directorios, además de gestionar los permisos o crear enlaces simbólicos.
+
+``` 
+ansible all -m file -a "dest=/tmp/test mode=644 state=directory"
+```
+![](images/19.png "file")
+
+*Eliminar archivos y directorios*
+
+Para eliminar un archivo o directorio simplemente hay que establecer su estado a absent.
+
+```
+ansible all -m file -a "dest=/tmp/file state=absent"
+```
+![](images/20.png "file")
+
+*Crones*
+
+Las tareas periódicas que se ejecutan mediante un cron se gestionan mediante el crontab del sistema. Lo normal en estos casos es ejecutar crontab -e para editar los crones, pero con el módulo de crones de Ansible, la gestión de los mismos es muy sencilla.
+
+Para ejecutar un script todos los días a las 4 de la madrugada:
+
+```
+ansible all -m cron -a "name='my-cron' hour=4 job='/script.sh'"
+```
 
 
 
