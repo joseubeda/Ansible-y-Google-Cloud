@@ -151,11 +151,6 @@ A continuación vamos a realizar una breve demostración de cómo utilizar los m
 
 - Crones
 
-- Handlers
-
-- Includes
-
-- Roles
 
 ### Módulo *ping*
 El módulo ping nos permite realizar un ping sobre todos los nodos del inventario o sobre algún nodo específico.
