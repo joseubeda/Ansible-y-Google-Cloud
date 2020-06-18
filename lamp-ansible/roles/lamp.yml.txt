@@ -1,0 +1,13 @@
+---
+
+- name: install LAMP Stack
+  become: yes
+  hosts: nodos
+  become: true
+  gather_facts: true
+
+- name: Include Apache
+  import_playbook: apache.yml
+
+- name: Include MySQL
+  import_playbook: mysql.yml

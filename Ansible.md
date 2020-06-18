@@ -151,6 +151,12 @@ A continuación vamos a realizar una breve demostración de cómo utilizar los m
 
 - Crones
 
+- Handlers
+
+- Includes
+
+- Roles
+
 ### Módulo *ping*
 El módulo ping nos permite realizar un ping sobre todos los nodos del inventario o sobre algún nodo específico.
 
@@ -297,12 +303,221 @@ ansible all -m cron -a "name='my-cron' hour=4 job='/script.sh'"
 ```
 
 
+##	Ansible Playbooks 📄
+
+Un Playbook es un archivo escrito en YAML donde se describen las tareas de configuración y administración que queremos realizar en cada uno de los nodos.
+
+Un Playbook está formado por uno a varios Plays y un Play está formado por un conjunto de operaciones que vamos a realizar en un nodo.
+
+**Estructura de un Playbook**
+
+Es posible orquestar muchas máquinas al mismo tiempo con los plays de Ansible gracias a la agrupación de los nodos en los inventarios de Ansible.
+
+Con estos comandos podríamos instalar un servidor Apache en cada nodo:
+```
+sudo apt-get install apache2
+sudo service apache2 start
+```
+Con este playbook de Ansible lo haríamos de forma paralela en ambos nodos:
+```
+- hosts: all
+ become: yes
+ tasks:
+ - name: Install Apache is at the latest version
+ apt: name=apache2 state=latest
+ - name: Ensure apache is running
+ service: name=apache2 state=started enabled=yes
+
+```
+Podemos ejecutar el playbook anterior con:
+```
+ansible-playbook playbook.yaml
+```
+
+**Lista de Tareas**
+
+Cada play contiene una lista de tareas, las cuales se ejecutan en orden y solo una al mismo tiempo. 
+Es importante saber que el orden de las tareas es el mismo para todos los nodos. 
+
+Si falla una tarea, se puede volver a ejecutar, ya que los módulos deben ser idempotentes, es decir, que ejecutar un módulo varias veces debe tener el mismo resultado que si se ejecuta una vez.
+
+Todas las tareas deben tener un name, el objetivo es que la persona que ejecute Ansible pueda leer con facilidad la ejecución del playbook.
+Las tareas se declaran en el formato module: options.
+Por ejemplo:
+
+```
+- hosts: all
+ become: yes
+ tasks:
+ - name: Ensure apache is running
+ service: name=apache2 state=started enabled=yes
+```
+
+**Handlers**
+
+Tal y como se ha mencionado anteriormente, los módulos deben ser idempotentes y pueden realizar cambios en los servidores donde se ejecuten.
+Ansible reconoce dichos cambios y tiene un sistema de eventos que se puede utilizar para gestionar el resultado de una acción.
+
+Estas acciones de notificación son lanzadas al final de cada bloque de tareas en un play y solo se ejecutarán una vez incluso si se llaman desde diferentes tareas.
+
+Por ejemplo, cuando cambiemos un archivo de configuración podríamos reiniciar Apache, pero si Ansible detecta que lo vamos a reiniciar más de una vez, lo reinicia una única vez.
+
+Con todo esto el contenido del archivo de ejemplo apache.yml podría ser:
+
+```
+---  
+- hosts: googlehosts 
+  become: yes 
+  tasks: 
+    - name: Install apache2 
+      apt: name=apache2 update_cache=yes state=latest 
+
+    - name: Enable mod_rewrite 
+      apache2_module: name=rewrite state=present 
+      notify: 
+        - Restart apache2
+
+  handlers: 
+    - name: Restart apache2
+      service: name=apache2 state=restarted
+```
+
+Para ejecutar el paybook usamos el siguiente comando:
+
+```
+ansible-playbook apache.yml
+```
+
+![](images/21.png "playbook")
 
 
 
+**Includes**
+
+Aunque es posible escribir un playbook en un archivo muy largo, lo habitual es tratar de reutilizar partes del proyecto Ansible y tener todo organizado. En su nivel más básico, incluir archivos con tareas nos permite dividir grandes archivos de configuración en otros más pequeños.
+Incluso un playbook puede ser incluido en otro playbook utilizando la misma sintaxis de include.
+
+**Roles**
+
+Ahora que ya sabemos lo que es una tarea, un handler o un include, sabemos que un proyecto en Ansible puede ser organizado para que sea mantenible. 
+Cuando nuestra aplicación crece y hacemos includes, podemos llegar a transformar la aplicación en algo ilegible porque tendríamos un include dentro de otro infinitamente. Aquí surgen los roles, que son “paquetes” de configuraciones bien organizados que pueden reutilizarse en cualquier host.
 
 
+---
+___
 
 
+# __**Instalación de la pila LAMP mediante Ansible**__ 
+
+Para la instalación de la pila LAMP en los diferentes nodos mediante Ansible vamos a seguir los siguientes pasos:
+
+1. Tener configurados nuestros nodos como hemos visto anteriormente.
+
+2. Configurar nuestro archivo de inventario que se encuentra en /etc/ansible/hosts. Creamos un grupo llamado nodos que contendrá las IPs de los diferentes nodos.
+
+ ```
+[nodos]
+10.128.0.7
+10.128.0.8
+```
+
+3. En nuestro nodo máster creamos una carpeta para nuestro proyecto, y dentro, otra carpeta llamada roles que contendrá los playbooks necesarios para el despliegue.
+
+4. El primer playbooks que crearemos será el de apache.yml, con un contenido similar a éste:
+
+```
+---
+- hosts: nodos
+  become: yes
+  tasks:
+    - name: Install apache2
+      apt: name=apache2 update_cache=yes state=latest
+    - name: Enable mod_rewrite
+      apache2_module: name=rewrite state=present
+      notify:
+        - Restart apache2
+  handlers:
+    - name: Restart apache2
+      service: name=apache2 state=restarted
+
+```
+5. A continuación creamos el playbook de mysql.yml con el siguiente contenido:
+
+```
+- name: Install MySQL for production ready server
+  become: yes
+  hosts: nodos
+  vars:
+    MySQL_root_pass: root
+  tasks:
+    - name: Set MySQL root password before installing
+      debconf: name="mysql-server" question="mysql-server/root_password" value="{{MySQL_root_pass | quote}}" vtype=$
+    - name: Confirm MySQL root password before installing
+      debconf: name="mysql-server" question="mysql-server/root_password_again" value="{{MySQL_root_pass | quote}}" $
+    - name: test1
+      apt: package={{ item }} state=present force=yes update_cache=yes cache_valid_time=3600
+      with_items:
+        - mysql-server
+        - mysql-client
+        - python-mysqldb
+    - name: Deletes anonymous MySQL server user for localhost
+      mysql_user: user="" state="absent" login_password="{{ MySQL_root_pass }}" login_user=root
+    - name: Secures the MySQL root user
+      mysql_user: user="root" password="{{ MySQL_root_pass }}" host="{{ item }}" login_password="{{MySQL_root_pass}$
+      with_items:
+        - 127.0.0.1
+        - localhost
+        - ::1
+        - "{{ ansible_fqdn }}"
+    - name: Removes the MySQL test database
+      mysql_db: db=test state=absent login_password="{{ MySQL_root_pass }}" login_user=root
+
+```
+
+6. Por último vamos a crear el playbook el cual vamos a desplegar que se llamará lamp.yml con el siguiente contenido:
+
+> **Buena Praxis**  
+> El archivo lamp.yml contiene a su vez a los otros playbooks gracias al sistema de includes.Sin este sistema tendríamos un playbook muy extenso y demasiado lioso a medidad que aumentamos código, por eso utilizamos este método que es mucho mas curioso y sostenible en el tiempo:
+
+```
+---
+
+- name: install LAMP Stack
+  become: yes
+  hosts: nodos
+  become: true
+  gather_facts: true
+
+- name: Include Apache
+  import_playbook: apache.yml
+
+- name: Include MySQL
+  import_playbook: mysql.yml
+
+```
+
+7. Para desplegar el playbook de ansible lo hacemos mediante el siguiente comando:
+
+```
+ansible-playbook lamp.yml
+```
+
+Si todo va como debería obtendríamos un resultado similar a la imagen:
+
+![](images/22.png "lamp.yml")
 
 
+___
+---
+
+## Referencias 🧩
+
+[Jose Juan Sanchez](https://josejuansanchez.org/taller-ansible-aws// "JJ the best")
+
+[Videotutorial de Ansible de makigas.es](https://www.makigas.es/series/ansible/ "")
+
+[Curso de Ansible de ualmtorres](https://ualmtorres.github.io/CursoAnsible/tutorial/ "")
+
+[Taller de Ansible](https://github.com/iesgn/talleres_asir_iesgn/blob/master/ansible/ansible.md "")
+
+[Ansible Oficial](https://www.ansible.com "")
