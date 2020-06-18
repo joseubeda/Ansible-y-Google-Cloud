@@ -3,7 +3,6 @@
 - name: install LAMP Stack
   become: yes
   hosts: nodos
-  become: true
   gather_facts: true
 
 - name: Include Apache
